@@ -1,0 +1,473 @@
+\documentclass{exam} 
+%\documentclass[answers]{exam} 
+\usepackage{amsmath,amssymb,enumitem,
+float,tikz,pgfplots,etoolbox,ifthen,xcolor,fullpage,graphicx,comment,environ,array} 
+
+\usepackage[hidelinks]{hyperref}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Add some star options
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usetikzlibrary{shapes.geometric, calc} %testing stars...  use \starscore{numStarsFilled}{numStarsTotal} -kmp
+\newcommand\starscore[2]{%
+  \pgfmathsetmacro\pgfxa{#1 + 1}%
+  \tikzstyle{scorestars}=[star, star points=5, star point ratio=2.5, draw, inner sep=0.12em, anchor=outer point 3]%
+  \begin{tikzpicture}[baseline=2pt]
+    \foreach \i in {1, ..., #2} {
+      \pgfmathparse{\i<=#1 ? "black" : "white"}
+      \edef\starcolor{\pgfmathresult}
+      \draw (\i*1em, 0) node[name=star\i, scorestars, fill=\starcolor, semithick]  {};
+    }
+    \pgfmathparse{#1>int(#1) ? int(#1+1) : 0}
+    \let\partstar=\pgfmathresult
+    \ifnum\partstar>0
+      \pgfmathsetmacro\starpart{#1-(int(#1)}
+      \path [clip] ($(star\partstar.outer point 3)!(star\partstar.outer point 2)!(star\partstar.outer point 4)$) rectangle 
+      ($(star\partstar.outer point 2 |- star\partstar.outer point 1)!\starpart!(star\partstar.outer point 1 -| star\partstar.outer point 5)$);
+      \fill (\partstar*1em, 0) node[scorestars, fill=black]  {};
+    \fi
+  \end{tikzpicture}%
+}
+\newcommand{\onestar}{{\starscore{1}{4}}\ }
+\newcommand{\twostar}{{\starscore{2}{4}}\ }
+\newcommand{\threestar}{{\starscore{3}{4}}\ }
+\newcommand{\fourstar}{{\starscore{4}{4}}\ }
+\pgfplotsset{compat=1.17}
+
+
+\usepackage[normalem]{ulem}
+\addpoints
+\marksnotpoints
+
+\definecolor{MyGreen}{rgb}{0.1, 0.4, 0.1}
+\definecolor{MyBlue}{rgb}{0.1, 0.1, 0.9}
+
+\AtBeginEnvironment{solution}{\color{MyGreen}}
+
+\newboolean{NoSolutions} 
+% Select one of the following two active lines.
+% (The \setboolean command allows you to use ifthen)
+%\noprintanswers\setboolean{NoSolutions}{true}
+\printanswers  \setboolean{NoSolutions}{false}
+
+%Add rubrics
+\usepackage{tagging}
+% Comment out this line to hide the rubric text:
+\usetag{rubric}
+
+\newcommand\pts[1][2]{\textcolor{MyBlue}{\text{\bf [#1 pts]}}}
+\newcommand\pt{\textcolor{MyBlue}{\text{\bf [1 pt]}}}
+
+\newcommand\rubric[1]{\tagged{rubric}{\textcolor{MyBlue}{#1}}}
+
+\newenvironment{rubricEnv}{\taggedblock{rubric} \color{MyBlue}}{\endtaggedblock}
+
+%\newcommand{\onestar}{\raisebox{0.05cm}{\resizebox{1.6cm}{!}{$\bigstar\largewhitestar\largewhitestar\largewhitestar$ \ }}}
+%\newcommand{\twostar}{\raisebox{0.05cm}{\resizebox{1.6cm}{!}{$\bigstar\bigstar\largewhitestar\largewhitestar$ \ }}}
+%\newcommand{\threestar}{\raisebox{0.05cm}{\resizebox{1.6cm}{!}{$\bigstar\bigstar\bigstar\largewhitestar$ \ }}}
+%\newcommand{\fourstar}{\raisebox{0.05cm}{\resizebox{1.6cm}{!}{$\bigstar\bigstar\bigstar\bigstar$ \ }}}
+
+\newcommand{\lr}[3]{\left#1{\mathstrut#3}\right#2}
+\renewcommand{\half}{\frac{\textstyle 1}{\textstyle 2}}
+\renewcommand{\o}{\omega}
+\renewcommand{\a}{\alpha}
+\renewcommand{\b}{\beta}
+\renewcommand{\bar}[1]{\mskip.5\thinmuskip\overline{\mskip-.5\thinmuskip {#1} \mskip-.5\thinmuskip}\mskip.5\thinmuskip}
+
+
+\everymath{\displaystyle}
+\newcommand{\diff}[2]{\frac{\text{d}#1}{\text{d}#2}}
+
+
+\begin{document}
+
+\subsection*{MATH 101A --- ASSIGNMENT 1}
+
+Authors: Philip Loewen, Raphael Kelly, Sven Bachmann, and Peter Harrington
+
+\subsubsection*{Learning goals}
+\begin{itemize}
+    \setlength\itemsep{0.1em}
+    \item Compute the average value of a given function on a given interval.
+    \item Calculate moving averages for a given time-varying function.
+    \item Interpret integrals involving flow rates in practical terms.
+    \item Confront the Keeling curve and its consequences.
+\end{itemize}
+
+
+
+\subsubsection*{Assignment questions}
+
+
+\noindent
+\textit{Parts (\ref{sineaverage}), (\ref{quadratic}), and (\ref{cosinelags}) of Question~2
+require plots. We will accept either careful handmade sketches or 
+computer-generated graphics, as produced by software like Desmos.}
+
+\bigskip
+
+\noindent
+The graph below may be the most important one you study all year.
+It shows the concentration of CO$_2$ in the atmosphere as a function of time.
+This has a strong influence on the global climate.
+\[
+\includegraphics[scale=0.35]{maunaloa2.png}
+\]
+\[\text{\textbf{Fig.~1:} CO$_2$ concentrations in recent years}\]
+Today's CO$_2$ levels have never been seen before in human history,
+and they will cause enormous global changes in the next few decades.
+Understanding this graph in detail will be an important step
+in preparing for, perhaps even influencing,
+the immediate future of humanity and indeed all life on Earth.
+
+\begin{questions}
+
+\question[12]
+There is a clear increasing trend in Figure~1,
+but there are also short-term ripples.
+To systematically remove the ripples
+and extract the trend,
+we can use a \emph{moving average}.
+
+For any integrable function $f$ and interval $[a,b]$,
+the \emph{average value of $f$ on $[a,b]$} is the number
+$f_{\rm AV}$ defined by
+\[
+f_{\rm AV} = \dfrac{1}{b-a}\int_a^b f(t)\,dt.
+\]
+Rearranging this definition reveals a natural interpretation:
+\[
+\int_a^b f(t)\,dt
+= (b-a) f_{\rm AV}
+= \int_a^b f_{\rm AV}\,dt.
+\]
+The number $f_{\rm AV}$ is \emph{the unique constant} 
+that produces the same integral as $f$ over $[a,b]$.
+
+
+
+
+
+\begin{parts} 
+\part\onestar \label{sineaverage}
+Calculate the average value of the function $f(t)=\sin(t)$ on the interval $[0,\pi]$.
+Then plot the graphs of $y=f(t)$ and $y=f_{\rm AV}$ on the same set of axes,
+restricting the sketch to $0\le t\le\pi$.
+
+
+
+
+\part\onestar \label{quadratic}
+Calculate the average value of the function $f(t) = t^2$ on the interval $[1,2]$.
+Then plot the graphs of $y=f(t)$ and $y=f_{\rm AV}$ on the same set of axes,
+restricting the sketch to $1\le t\le 2$.
+
+
+
+
+
+\begin{EnvUplevel}
+Now imagine that some time-varying function $f$ is given.
+If we pick some number $r>0$, we can imagine the interval $[t-r,t]$
+as a moving window of width $r$ and final time $t$.
+Calculating the average value of $f$ over this window
+will produce a result that depends on $t$, 
+thus defining a new function $\bar f$ as follows:
+\[
+\bar f(t) = \dfrac{1}{r} \int_{t-r}^{t} f(x)\,dx.
+\]
+Let's investigate the relationship between various functions $f$
+and their corresponding functions $\bar f$.
+\end{EnvUplevel}
+
+\part\onestar \label{powers}
+Let $f_0(t)=1$, $f_1(t)=t$, and $f_2(t)=t^2$.
+Find $\bar f_0(t)$, $\bar f_1(t)$, and $\bar f_2(t)$.
+(The results may depend on $r$.)
+
+
+
+
+\part\onestar \label{generalquadratic}
+Express $\bar f(t)$ in terms of $r$ for the general quadratic
+$f(t) = at^2 + bt + c$, where $a,b,c$ are real constants.
+
+
+
+
+\part\onestar \label{cosine}
+Given a constant $\o>0$, let $g(t) = \cos(\o t)$.
+Find $\bar g(t)$ in terms of $r$ (and, of course, $\o$).
+
+
+
+
+\part\threestar \label{shortwindoweg}
+It's reasonable to expect that a moving average with a very short window
+should produce a new function very close to the original one,
+provided the original function is continuous.
+Test this expectation on the functions from parts~(\ref{generalquadratic}) and~(\ref{cosine}) above
+by taking the limit as $r\to 0^+$ in your expressions
+for $\bar f(t)$ and $\bar g(t)$: confirm that the limit
+recovers $f(t)$ and $g(t)$ for each real $t$.
+
+
+
+
+\part\twostar \label{derivative}
+For a generic continuous function $h$,
+an an arbitrary averaging window duration $r>0$,
+find an algebraic formula involving $r$ for $\bar h'(t)$.
+% \\
+% Explain why an English description of the result could be,
+% ``The slope of the average equals the average slope.''
+
+
+
+\part\onestar \label{cosinelags}
+For this part only, define $g(t)=\cos(2\pi t)$
+and use $r=\half$ to define $\bar g(t)$.
+Plot both $y=g(t)$ and $y=\bar g(t)$ for $0\le t\le 4$
+on the same axes.
+
+
+
+
+\part \twostar Look at the maximum and minimum values on your plot in part~(\ref{cosinelags}).
+Notice that
+\begin{enumerate}
+\item the extreme values of $\bar g(t)$
+\emph{occur later} than the extreme values of $g(t)$, 
+and
+\item the extreme values of $\bar g(t)$
+\emph{are smaller in magnitude} than the extreme values of $g(t)$.
+\end{enumerate}
+Write brief intuitive explanations of these two facts.
+(\emph{Note\/}: 
+``That's what the calculations produce'' is simultaneously
+(i)~logically correct, and (ii)~a dreadful intuitive explanation.)
+
+
+
+
+
+\part\threestar \label{shortwindow}
+Extend your observations in part~(\ref{shortwindoweg}) above to 
+explain why taking the limit as $r\to 0^+$ in the definition
+of $\bar h(t)$ will recover the original value of $h(t)$,
+for any given continuous function $h$.
+\\
+(\emph{Hint\/}:
+This question is \emph{fundamental}.
+You have confronted it before.)
+
+
+
+
+\part\twostar \label{cosinekiller}
+When $g(t)=\cos(\o t)$ as above, 
+some special values of $r>0$ are 
+extremely effective at removing ripples.
+Find all $r>0$ for which $\bar g(t)$ is a constant function.
+(Expect the answers to involve $\o$.)
+% Write 1--2 sentences giving an intuitive explanation for your
+% result.
+
+
+
+
+\end{parts}
+
+\question[5]
+Figure~1 shows that the CO$_2$ concentration 
+in the atmosphere varies from season to season.
+Photosynthesis helps explain this: 
+there is more land, and therefore more plant material,
+in Earth's northern hemisphere than in the south.
+When the northern hemisphere is having summer,
+plants absorb CO$_2$ and turn it into tissue.
+When it is winter in the north,
+the plants slow down their absorption and the humans 
+turn up their emissions.
+It's summer in the south,
+but there aren't enough plants there to compensate for 
+all this and keep the absorption rate steady.
+
+Suppose $M(t)$ denotes the total mass of CO$_2$ in the atmosphere
+at time $t$, measuring time $t$ in years from the usual Year~0,
+and measuring mass in kg.
+Then we can write
+\[
+\frac{dM}{dt}=i(t)-o(t),
+\]
+where $i(t)$ is the rate at which CO$_2$ is added to the atmosphere due to respiration and emissions 
+[``influx'']
+and $o(t)$ is the rate at which CO$_2$ leaves the atmosphere due to photosynthesis and other effects
+[``outflux''].
+
+\begin{parts}
+
+\part \onestar Let $t_0 \geq 0$ and $t_1 > t_0$ represent two different points in time. 
+Write a brief description, including units, for the physical meaning of the
+integrals shown below:
+    \begin{itemize}
+            \item  $\int_{t_0}^{t_1} i(t)\,dt$,
+            \item   $\int_{t_0}^{t_1} \left(i(t) - o(t)\right)\,dt$.
+     \end{itemize}
+
+\begin{EnvUplevel}
+The total mass of the atmosphere changes slowly enough to be treated as a constant, $M_0$.
+Define $C(t) = 10^6\,M(t)/M_0$: 
+since both $M(t)$ and $M_0$ are measured in kg,
+their ratio is a pure number with no units.
+Multiplying that ratio by $10^6$ produces numbers of convenient sizes,
+and explains the description of $C(t)$ as a concentration in ``parts per million (ppm)''.
+This is the function plotted in Figure~1.
+\end{EnvUplevel}
+
+
+\begin{EnvUplevel}
+If the ripples in Figure~1 are really caused by the seasons,
+their influence might have a form like $\cos(\o t)$, with $\o$
+chosen so that a full cycle takes exactly one year.
+This calls for $\o=2\pi$ (with units y$^{-1}$).
+With the results of problem~2(\ref{cosinekiller}) above in mind, we choose $r = 2\pi/\o = 1$ (units: y)
+and introduce
+\[
+\bar C(t) = \dfrac{1}{r}\int_{t-r}^t C(x)\,dx = \int_{t-1}^t C(x)\,dx.
+\]
+The accurate measurements plotted in Fig.~1 are freely available online.
+They are tabulated monthly, so anyone can use the Trapezoidal Rule with $12$
+subintervals to calculate a good approximation for $\bar C(t)$ at each
+measurement time $t$.
+The next plot shows the graphs of the measured function $C(t)$
+and the computed values of $\bar C(t)$.
+\[
+\includegraphics[scale=0.60]{trend0.png}
+\]
+\end{EnvUplevel}
+
+\begin{EnvUplevel}
+The curve $y=\bar C(t)$ looks not quite linear, so we look for a quadratic approximation 
+\[
+\bar C(t)\approx y(t),
+\qquad\text{for}\ y = \a t^2 + \b t + \gamma. 
+\]
+Standard methods out of scope for this assignment provide the constants
+\[
+\a = 0.012997,\quad
+\b = -50.125,\quad
+\gamma = 48631.
+\]
+\end{EnvUplevel}
+
+\vfill\clearpage
+
+\begin{EnvUplevel}
+Here is a plot showing the target curve and approximating parabola defined above:
+\[
+\includegraphics[scale=0.60]{approxy.png}
+\] 
+\end{EnvUplevel}
+
+\part \twostar \label{co2trend}
+Consider an idealized function $C_{101}(t)$ with the form below,
+where all the parameters except $t$ are constants:
+\[
+C_{101}(t) = a t^2 + bt + c + A\cos(2\pi t + \phi).
+\]
+We want to choose these constants so that the moving average
+$\bar C_{101}(t)$ is identical to the approximating parabola
+$y=\a t^2 + \b t + \gamma$ plotted above.
+Use this criterion to find $a$, $b$, and $c$ to 5-digit accuracy.
+\\
+({\emph Hint\/}:
+Our choice of $r=2\pi/\o=1$ makes the function
+$\bar C_{101}(t)$
+independent of the cosine term. This is a small extension of
+Problem~2(\ref{cosinekiller}): you don't have to prove it.
+So, for this part only, it's valid to calculate as if $A=0$
+in $C_{101}(t)$.)
+
+
+
+\begin{EnvUplevel}
+Using the values of $a,b,c$ found in part~(\ref{co2trend}) 
+and choosing $A=2.8$ and $\phi=0.9\pi$
+completes the definition of our approximating function $C_{101}(t)$.
+The sketch below shows that the graph of $C_{101}$ tracks the actual measurements
+reasonably well.
+
+\[
+\includegraphics[scale=0.75]{C101andC.png}
+\]
+
+\end{EnvUplevel}
+
+\part \onestar
+In 2015, the nations of the world met in Paris 
+and agreed to limit the average global
+temperature to 1.5$^\circ$C above its pre-industrial average.
+Then, in 2016, scientists advising the IPCC said that we need
+to maintain $C(t)\le 430$ to achieve this goal.
+If current trends continue,
+in what year will $\bar C_{101}(t)=430$?
+
+
+
+
+
+
+
+\end{parts}
+
+
+\end{questions}
+
+\par\vfill\clearpage
+
+\noindent\textbf{Notes and References:}
+Statements in the text above are corroborated by
+many online sources.
+Representative samples are given below.
+
+\begin{itemize}
+\item 
+The monthly data used to produce the figures here comes from the NOAA,
+a government agency in the USA, at this URL:
+\url{https://gml.noaa.gov/ccgg/trends/data.html}
+\item
+The Paris Agreement was announced on 12 December 2015 at the
+conclusion of the COP21 climate conference sponsored by the United
+Nations. The UN page describing highlights of the agreement is here:
+\url{https://unfccc.int/process-and-meetings/the-paris-agreement}
+\item
+The graph in Fig.~1 is called the Keeling Curve.
+The sketch itself comes from the Scripps Institution of Oceanography
+at the University of California San Diego, on the ``Full Record'' tab:
+see \url{https://keelingcurve.ucsd.edu/}
+\item
+On the page just cited, the ``2K years'' tab extends the $t$-axis in
+Figure~1 back to Year~0 in our current numbering scheme. 
+The world's current situation is truly exceptional.
+\[
+\includegraphics[scale=0.3]{co2_2k_ce.png}
+\]
+\item
+Various credible online sources provide the 430~ppm target for
+atmospheric CO$_2$, including \href{https://www.reuters.com/article/idUSKCN1RT0OZ/}{Reuters}:
+\begin{quote}
+``Science advisers on the Intergovernmental Panel on Climate Change 
+have estimated the limits imply an atmospheric CO2 concentration of no more than 
+450 parts per million (for 2 degrees) or 430 ppm (for 1.5 degrees).''
+\end{quote}
+The same group of scientists is cited on the 
+\href{https://climate.mit.edu/ask-mit/what-ideal-level-carbon-dioxide-atmosphere-human-life}{MIT Climate Portal}:
+\begin{quote}
+``In 2016, a worldwide body of climate scientists said that a CO$_2$ level of 430 ppm would push the world past its target for avoiding dangerous climate change.''
+\end{quote}
+\item
+Confronting the facts explored in this assignment can be emotionally difficult.
+UBC has gathered some resources to help with this in the online
+\href{https://climateemergency.ubc.ca/stem-and-climate-wellbeing-toolkit/}{STEM and Climate Wellbeing Toolkit}.
+\end{itemize}
+\end{document}
