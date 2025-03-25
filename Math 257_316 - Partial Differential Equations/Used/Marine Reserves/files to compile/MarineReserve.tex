@@ -1,0 +1,121 @@
+
+\documentclass[12pt]{article}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{amsmath}
+\usepackage{graphicx}
+
+%TCIDATA{OutputFilter=LATEX.DLL}
+%TCIDATA{LastRevised=Friday, October 21, 2022 15:44:44}
+%TCIDATA{<META NAME="GraphicsSave" CONTENT="32">}
+%TCIDATA{Language=American English}
+
+\addtolength{\topmargin}{-30mm}
+\addtolength{\oddsidemargin}{-10mm}
+\addtolength{\textwidth}{20mm}
+\addtolength{\textheight}{65mm}
+\setlength{\parindent}{0mm}
+%\input{tcilatex}
+
+\begin{document}
+
+
+\pagestyle{empty}
+
+\begin{center}
+{\Large MATH 257/316 Class Project}\textbf{\ \\[0pt]
+}
+
+
+
+\textbf{A model to investigate the parameters that determine the possible
+extinction of a fish population}
+
+Anthony Pierce and Peter Harrington
+\end{center}
+
+
+Many species are constrained within a habitat of a given size. The size of the habitat may be limited due to the environment (e.g. there are only certain temperatures a species can tolerate, competition with other species, prey availability, or human induced mortality). A classic problem in mathematical ecology is to determine the minimum habitat size required for a species with a given growth rate to survive (Kot 2001).
+
+
+The Fisher equation (\ref{Fisher_Unscaled}) is one model for the growth and dispersal of a species within it's habitat. Here let us consider a fish population $P(X,T)$ within a marine reserve of length $L$. Intense fishing occurs outside of the reserve, so the fish population can only survive in the habitat $X\in (0,L)$. The boundary conditions $P(0,T)=0$ and $P(L,T)=0$ represent the mortality due to fishing outside of the reserve. Here we are assuming the fishing fleet is very efficient and removes all fish that reach $X=0$ and $X=L$.
+
+
+\begin{eqnarray}
+\frac{\partial P}{\partial T} &=&D\frac{\partial ^{2}P}{\partial X^{2}}%
++\gamma P(1-\frac{P}{P_c}),~~0<X<L,~~T>0  \label{Fisher_Unscaled} \\
+BC &:&P(0,T)=0,\text{ \ }P(L,T)=0  \notag \\
+IC &:&P(X,0)=F(X)  \notag
+\end{eqnarray}%
+Here $D$ represents the rate at which the fish disperse within the marine reserve, $\gamma $ represents the birth rate of the fish at low population densities, $P_c$ represents the carrying capacity of the environment, and $F(X)$ represents the fish population sampled at some initial time.
+
+(a) By introducing the scaled variables $x=X/L,$ $t=T/T_{0},$ and $%
+u=P/P_c, $ reduce the boundary value problem (\ref{Fisher_Unscaled}) to
+the following dimensionless form: 
+\begin{eqnarray}
+u_{t} &=&\alpha ^{2}u_{xx}+u(1-u),~~0<x<1,~~t>0  \label{Fisher} \\
+BC &:&u(0,t)=0,\text{ \ }u(1,t)=0  \notag \\
+IC &:&u(x,0)=f(x),  \notag
+\end{eqnarray}%
+where the dimensionless diffusion coefficient $\alpha ^{2}$ controls the
+evolution of the fishery.
+
+(b) Now explore the possibility of extinction of the fish population $%
+u\equiv 0$ by considering whether a small perturbation $\widetilde{u}$ to
+the zero solution, i.e., $u=0+$ $\widetilde{u},$ will grow or decay. By
+substituting this perturbation into (\ref{Fisher}) and retaining only first
+order terms derive the linearized Fisher equation:%
+\begin{eqnarray}
+\tilde{u}_{t} &=&\alpha ^{2}\tilde{u}_{xx}+\tilde{u},~~0<x<1,~~t>0
+\label{Linear_Fisher} \\
+BC &:&\tilde{u}_{x}(0,t)=0,\text{ \ }\tilde{u}(1,t)=0  \notag \\
+IC &:&\tilde{u}(x,0)=\widetilde{f}(x)  \notag
+\end{eqnarray}%
+(c) Use the method of separation of variables to solve the above boundary
+value problem (\ref{Linear_Fisher}) for $\tilde{u}(x,t)$.\bigskip \bigskip
+
+\begin{center}
+(Continued on the next page)\pagebreak
+\end{center}
+
+(d) Identify a condition on the dimensionless parameter $\alpha ^{2}$ that
+characterizes the boundary $\alpha _{c}^{2}$ between extinction and
+persistence of the fish population. Interpret your results to determine the
+minimal length of the marine reserve that will ensure persistence of the
+fish population as a function of the other parameters in the form $%
+L=g(D,\gamma ).$
+
+(e) Modify the MATLAB code provided in lecture 8 to solve the fully
+nonlinear Fisher equation (\ref{Fisher}) using finite differences. Now
+explore the sharpness of the extinction/persistence boundary by observing
+the solution for $\alpha ^{2}=0.4$ and $\alpha ^{2}=0.41$ larger than and
+just smaller than $\alpha _{c}^{2}.$ Use an initial perturbation 
+\begin{equation*}
+u(x,0)=0.1e^{(-64(x-\frac{1}{2})^{2})}
+\end{equation*}%
+Integrate the solution till $t=800$, determine $u(0,800),$\ and plot $%
+u(x,t=800)$ in both cases $\alpha ^{2}=0.4$ and $\alpha ^{2}=0.41$. For
+stability adjust the parameter $Nt$ to $Nt=2e6;.$
+
+
+\vskip 1cm
+
+\textbf{Interesting related references:}
+
+\
+
+H. Kierstead and L.B. Slobodkin. The size of water masses containing plankton blooms. \textit{Journalof Marine Research},12(1):141-147,1953.
+
+\
+
+John G. Skellam. Random dispersal in theoretical populations. \textit{Biometrika},38(1/2):196-218,1951.
+
+\
+
+Mark Kot. Elements of Mathematical Ecology, Chapters 15-17, Cambridge University Press, 2001 (Free online through UBC library)
+
+\
+
+Michael G. Neubert. Marine reserves and optimal harvesting, \textit{Ecology Letters}, 6:843-849, 2003.
+
+
+\end{document}
