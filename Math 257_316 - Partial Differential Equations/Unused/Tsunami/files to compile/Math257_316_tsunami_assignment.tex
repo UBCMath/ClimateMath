@@ -1,0 +1,69 @@
+
+\documentclass[12pt]{article}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{enumitem}
+
+%TCIDATA{OutputFilter=LATEX.DLL}
+%TCIDATA{LastRevised=Friday, October 21, 2022 15:44:44}
+%TCIDATA{<META NAME="GraphicsSave" CONTENT="32">}
+%TCIDATA{Language=American English}
+
+\addtolength{\topmargin}{-30mm}
+\addtolength{\oddsidemargin}{-10mm}
+\addtolength{\textwidth}{20mm}
+\addtolength{\textheight}{65mm}
+\setlength{\parindent}{0mm}
+%\input{tcilatex}
+
+\begin{document}
+
+
+\pagestyle{empty}
+
+\begin{center}
+{\Large MATH 257/316 Assignment}\textbf{\ \\[0pt]
+}
+
+\textbf{An investigation into shallow water waves and the speed and height of tsunamis}
+
+
+Peter Harrington and Anthony Peirce
+\end{center}
+
+
+Tsunamis, caused by earthquakes in the ocean, can travel vast distances quickly before arriving on shore. The movement of a tsunami towards shore is governed by what are called shallow water equations of motion, given in their simplest form by equation (\ref{eq:shallow}). The shallow water equations govern any ocean wave for which the depth of the ocean is much smaller than the horizontal scale of the flow. In the case of tsunamis, while they travel through the deep ocean, their wavelength is on the order of hundreds of kilometers and so the shallow water equations still govern their motion.
+
+\
+
+If $H$ is the average depth of the ocean, then the shallow water equation determines the height of a wave $h(x,t)$ above $H$ at position $x$ at time $t$: 
+\begin{align}
+&\frac{\partial^2 h}{\partial t^2}-gH\frac{\partial^2 h}{\partial x^2}=0\label{eq:shallow}\\ 
+&h(x,0)=h_0(x)\notag,
+\end{align}
+where $g$ is the force due to gravity.
+
+\begin{enumerate}
+\item Substitute the ansatz $h(x,t)=e^{i(kx+\sigma t)}$ into equation (\ref{eq:shallow}) to find the dispersion relation in terms of $\sigma$, and rewrite the ansatz in terms of only $k$, $x$, $t$, $g$, and $H$.
+%\item Note to Anthony: I'm not sure what the right question is next, but it would be useful for the following question to either have students show or give students the equation $h(x,t)=\frac{1}{2}\left[ h_0(x-\sqrt{gH}t)+h_0(x+\sqrt{gH}t)\right]$ 
+
+\item Assume the 1D spatial direction of equation (\ref{eq:shallow}) is in the cross-shore direction, so that waves are either moving towards or away from shore. We can write d'Alembert's solution to equation (\ref{eq:shallow}) as \[h(x,t)=\frac{1}{2}\left[ h_0(x-\sqrt{gH}t)+h_0(x+\sqrt{gH}t)\right]\]
+
+Looking at d'Alembert's solution, what is the speed at which waves move towards shore? Will waves in shallower water move more or less quickly than waves in deeper water (assuming they are still governed by equation (\ref{eq:shallow})).
+\item If a tsunami is caused by an earthquake 2km below the surface of the ocean, how fast will the wave generated be moving towards the shore?
+\end{enumerate}
+
+Green's law describes how the height of a shallow water wave changes based on the depth of the ocean. In it's simplest form it states: $h_1\sqrt[4]{H_1}=h_2\sqrt[4]{H_2}$, where $h_1$ and $h_2$ are the wave heights at locations 1 and 2, respectively, and $H_1$ and $H_2$ are the average water depths at those locations. 
+
+\begin{enumerate}[resume]
+\item Based on Green's law, if a tsunami has an initial height of 1m when it is caused by an earthquake 2km below the surface of the ocean, how high will it be near shore when the height of the tsunami is equal to the depth of ocean.? Assuming the shallow wave equation still governs its motion, how fast will it be moving then?
+\end{enumerate}
+
+Note that the simple form of Green's law is not very accurate near the shore, where other nonlinear effects of motion become important, and so tsunamis can become much larger and move at faster speeds near shore than calculated here.
+
+
+
+
+
+\end{document}
